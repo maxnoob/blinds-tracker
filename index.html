@@ -1,0 +1,120 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blinds Tracker</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div id="app">
+      <main>
+        <h1>Blinds Tracker</h1>
+        <h2>Modus: Rounds</h2>
+        <div>
+          <label for="startblinds">Start Blinds</label>
+          <input
+            type="number"
+            min="10"
+            step="10"
+            value="10"
+            v-model="startSmallBlind"
+          />
+        </div>
+        <label for="players">Current number of players</label>
+        <input
+          name="players"
+          type="number"
+          min="2"
+          max="20"
+          value="2"
+          v-model="playerCount"
+        />
+        <div>
+          With <span class="bigNumber">{{playerCount}}</span> players, increase
+          the blinds every
+          <span class="bigNumber">{{Math.ceil(30/playerCount)}}</span> rounds.
+        </div>
+        <div>
+          Current blinds <button type="button" @click="decrLevel">-</button
+          ><button type="button" @click="incrLevel">+</button>
+          <div>
+          <div class="currentBlind">
+          {{startSmallBlind*blindLevels[currentLevel]}} /
+          {{startSmallBlind*blindLevels[currentLevel]*2}}
+          </div>
+        </div>
+        </div>
+        <div>Rounds with current blinds <button type="button" @click="decrRound">-</button
+            ><button type="button" @click="incrRound">+</button>
+            <div>
+            <div class="veryBigNumber">
+            {{currentRound}}
+            </div>
+            </div>
+        </div>
+        <div>
+          <ul>
+            <li v-for="(factor, key) in blindLevels" :key="key" :class="{ selectInList: currentLevel == key }">  
+              {{startSmallBlind * factor}} / {{startSmallBlind * factor * 2}}
+            </li>
+          </ul>
+        </div>
+      </main>
+    </div>
+    <script>
+      const app = Vue.createApp({
+        data() {
+          return {
+            playerCount: 2,
+            startSmallBlind: 10,
+            currentLevel: 1,
+            blindLevels: {
+              1: 1,
+              2: 2,
+              3: 4,
+              4: 6,
+              5: 8,
+              6: 10,
+              7: 15,
+              8: 30,
+              9: 50,
+              10: 100,
+              11: 200,
+              12: 500,
+            },
+            currentRound: 1,
+          };
+        },
+        methods: {
+          incrLevel() {
+            // only increase level to max in dict
+            if (this.currentLevel < Object.keys(this.blindLevels).length) {
+              this.currentLevel++;
+            }
+          },
+          decrLevel() {
+            // only decrease to min 1
+            if (this.currentLevel > 1) {
+              this.currentLevel--;
+            }
+          },
+          incrRound() {
+            // only increase level to max in dict
+            if (this.currentRound < Math.ceil(30/this.playerCount)) {
+              this.currentRound++;
+            }
+          },
+          decrRound() {
+            // only decrease to min 1
+            if (this.currentRound > 0) {
+              this.currentRound--;
+            }
+          },
+        },
+      });
+      app.mount("#app");
+    </script>
+  </body>
+</html>
